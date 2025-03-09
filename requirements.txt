@@ -1,0 +1,7 @@
+numpy
+pandas
+matplotlib
+ipywidgets==7.7.2
+openpyxl
+jupyter
+ipykernel

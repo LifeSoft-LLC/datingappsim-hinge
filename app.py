@@ -4,6 +4,7 @@ import base64
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+import numpy as np 
 from backend import run_dating_simulation, all_men_ids, all_women_ids
 
 app = Flask(__name__)
@@ -62,26 +63,42 @@ def index():
         # Generate match and like distribution plots
         plot_img = None
         if show_match_plots or show_like_plots:
-            fig, axes = plt.subplots(ncols=2, figsize=(14, 5))
+            fig, axes = plt.subplots(ncols=2, nrows=2, figsize=(14, 10))
 
-            # Sort match counts for men and women
-            men_matches = sorted([(uid, len(matches[uid])) for uid in all_men_ids], key=lambda x: x[1])
-            women_matches = sorted([(uid, len(matches[uid])) for uid in all_women_ids], key=lambda x: x[1])
+            men_matches = [len(matches[uid]) for uid in all_men_ids]
+            women_matches = [len(matches[uid]) for uid in all_women_ids]
+            men_likes_sent = [full_log[(full_log["UserID"] == uid) & (full_log["Decision"] == "Like")].shape[0] for uid in all_men_ids]
+            women_likes_sent = [full_log[(full_log["UserID"] == uid) & (full_log["Decision"] == "Like")].shape[0] for uid in all_women_ids]
 
-            if plot_type == "Histogram":
-                axes[0].hist([x[1] for x in men_matches], bins=[0, 1, 2, 3, 4, 5], edgecolor="black")
-                axes[1].hist([x[1] for x in women_matches], bins=[0, 1, 2, 3, 4, 5], edgecolor="black")
-            else:  # Default to Bar Chart
-                axes[0].bar(range(len(men_matches)), [x[1] for x in men_matches], color="skyblue", edgecolor="black")
-                axes[1].bar(range(len(women_matches)), [x[1] for x in women_matches], color="lightpink", edgecolor="black")
+            if plot_type == "Bar Chart":
+                if show_match_plots:
+                    axes[0, 0].bar(range(len(men_matches)), men_matches, color="skyblue", edgecolor="black")
+                    axes[0, 0].set_title("Men's Match Counts")
+                    axes[0, 1].bar(range(len(women_matches)), women_matches, color="lightpink", edgecolor="black")
+                    axes[0, 1].set_title("Women's Match Counts")
 
-            axes[0].set_title("Men's Match Counts (Sorted)")
-            axes[0].set_xlabel("Men (sorted by match count)")
-            axes[0].set_ylabel("Number of Matches")
+                if show_like_plots:
+                    axes[1, 0].bar(range(len(men_likes_sent)), men_likes_sent, color="skyblue", edgecolor="black")
+                    axes[1, 0].set_title("Men's Likes Sent")
+                    axes[1, 1].bar(range(len(women_likes_sent)), women_likes_sent, color="lightpink", edgecolor="black")
+                    axes[1, 1].set_title("Women's Likes Sent")
 
-            axes[1].set_title("Women's Match Counts (Sorted)")
-            axes[1].set_xlabel("Women (sorted by match count)")
-            axes[1].set_ylabel("Number of Matches")
+            elif plot_type == "Histogram":
+                data_values = men_matches + women_matches + men_likes_sent + women_likes_sent
+                max_value = max(data_values, default=1)
+                
+                # Ensure bins are properly spaced
+                num_bins = min(10, max_value + 1)  # Limit to 10 bins or max available range
+                bin_edges = np.linspace(0, max_value + 1, num_bins)
+
+                axes[0, 0].hist(men_matches, bins=bin_edges, color="blue", edgecolor="black")
+                axes[0, 0].set_title("Men's Match Distribution")
+                axes[0, 1].hist(women_matches, bins=bin_edges, color="pink", edgecolor="black")
+                axes[0, 1].set_title("Women's Match Distribution")
+                axes[1, 0].hist(men_likes_sent, bins=bin_edges, color="blue", edgecolor="black")
+                axes[1, 0].set_title("Men's Likes Sent Distribution")
+                axes[1, 1].hist(women_likes_sent, bins=bin_edges, color="pink", edgecolor="black")
+                axes[1, 1].set_title("Women's Likes Sent Distribution")
 
             plt.tight_layout()
             buf = io.BytesIO()

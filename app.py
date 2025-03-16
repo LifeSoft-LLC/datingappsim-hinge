@@ -250,9 +250,9 @@ def index():
                   axes[2,1].axis('off')
             
             plt.tight_layout()
-            # TODO: make this output svg instead, also downloadable
+            
             buf = io.BytesIO()
-            plt.savefig(buf, format="png")
+            plt.savefig(buf, format="svg")
             buf.seek(0)
             plot_img = base64.b64encode(buf.getvalue()).decode("utf8")
             plt.close(fig)
@@ -275,7 +275,7 @@ def index():
             {% if plot_img %}
             <div>
               <h3>Match Distribution Plots</h3>
-              <img src="data:image/png;base64,{{ plot_img }}" alt="Plots">
+              <img src="data:image/svg+xml;base64,{{ plot_img }}" alt="Plots">
             </div>
             {% endif %}
             <div style="margin-top: 20px;">

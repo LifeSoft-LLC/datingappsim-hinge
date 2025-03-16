@@ -186,7 +186,6 @@ def index():
               men_likes_received_hist = compute_hist_counts(men_likes_received)
               women_likes_received_hist = compute_hist_counts(women_likes_received)
               
-              fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(14,15))
               # Men's match histogram
               if show_match_plots:
                   axes[0,0].bar(range(len(men_match_hist)), men_match_hist,

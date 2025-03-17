@@ -3,7 +3,13 @@ import io
 import base64
 import matplotlib.pyplot as plt
 import pandas as pd
+import subprocess
 import os
+
+if not os.path.exists("probability_matrix_women_likes_men.csv"):
+    print("detected first run. Attempting to generate csv templates.")
+    subprocess.run(["python", "init.py"], check=True)
+
 import numpy as np 
 from backend import run_dating_simulation, all_men_ids, all_women_ids, all_user_ids
 

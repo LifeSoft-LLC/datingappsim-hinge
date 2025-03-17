@@ -305,6 +305,18 @@ def index():
         </style>
       </head>
       <body>
+        <h1>A "Hinge-like" dating simulation</h1>
+        <p>This simulation is similar to the one you saw during class. It is designed to replicate the dynamics of a (highly simplified) dating platform.
+        <p>As before, the simulation runs for three "days." Each day, the same 100 men and women (200 people in total), each with their own profiles and preferences, "log into" the platform in a random order and swipe right (like) or left (pass) on five profiles of the opposite sex.</p>
+        <p>The difference this time is that the simulation more closely follows the design of the the dating app Hinge. Rather than a single recommendations list of profiles, we imagine that users begin on a separate "Incoming likes" tab. This tab *only* shows profiles that are incoming likes.</p>
+        <p>Once the user exhausts their "Incoming likes" tab, if they have any leftover "capacity" (that is, if they have not yet processed 5 profiles that day), they move to a general browsing tab showing fresh profiles from among the remaining candidates, and they continue to like or pass until they reach their daily limit of 5.</p>
+        <p>The order of each user's "Incoming likes" tab can be either FIFO or LIFO (the real Hinge uses LIFO). Simultaneously, the order of each user's recommended profiles is determined by the platform's algorithm. Just like in class, that algorithm contains two "weights" that will be chosen by you.
+        <ul>
+          <li>The first is w<sub>reciprocal</sub> — by increasing this weight, you will <u><em>increase</em></u> the likelihood of being shown for candidate with a higher likelihood of liking back.</li>
+          <li>The second is w<sub>queue</sub> — by increasing this weight, you will <u><em>decrease</em></u> the likelihood of being shown for a candidate with a higher number of pending likes.</p>
+        </ul>
+        <p>(If you're interested in the full equation of the algorithm, please see the slide deck for Session 2 on Canvas.)</p>
+        <p>As before, we report likes, "stale" likes (not seen for more than one day), "unseen" likes (not seen at all), and matches. Results can be reported as either a bar chart (one bar is one man or one woman) or as a histogram of counts.</p>
         <h2>Hinge-Style Simulation Parameters</h2>
         <form method="post">
           <label for="incoming_order">Incoming Queue Order:</label>

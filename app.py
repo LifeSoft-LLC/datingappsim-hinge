@@ -84,16 +84,20 @@ def index():
 
         # Prepare summary HTML
         summary_html = f"""
-        <h2>Hinge-Style Simulation Results</h2>
-        <p><b>Days:</b> 3 (fixed) &nbsp;&nbsp;
-           <b>Daily Queue Size:</b> {daily_queue_size}</p>
-        <p><b>Total Likes Sent:</b> {total_likes}
-           (Men: {likes_by_men}, Women: {likes_by_women})</p>
-        <p><b>Total Unseen Likes Sent:</b> {total_unseen} ({unseen_percent:.2f}%)
-           (Men: {unseen_likes_men}, Women: {unseen_likes_women}</p>
-        <p><b>Total Stale Unseen Likes Sent:</b> {total_stale} ({stale_percent:.2f}%)
-           (Men: {stale_likes_men}, Women: {stale_likes_women})</p>
-        <p><b>Unique Matches Created:</b> {unique_matches}</p>
+        <div style='font-size:14px; line-height:1.5;'>
+          <b>=== Hinge-Style Simulation Results ===</b><br>
+          <br>
+          <b>Total Likes Sent:</b> {total_likes}<br>
+          - Likes by men: {likes_by_men}<br>
+          - Likes by women: {likes_by_women}<br><br>
+          <b>Total Unseen Likes Sent:</b> {total_unseen} ({unseen_percent:.2f}%)<br>
+          - Likes by men: {unseen_likes_men}<br>
+          - Likes by women: {unseen_likes_women}<br><br>
+          <b>Total Stale Unseen Likes Sent:</b> {total_stale} ({stale_percent:.2f}%)<br>
+          - Likes by men: {stale_likes_men}<br>
+          - Likes by women: {stale_likes_women}<br><br>
+          <b>Matches Created: <span style="color:purple; font-size:20px;">{unique_matches}</span></b>
+        </div>
         """
 
         # Generate plots

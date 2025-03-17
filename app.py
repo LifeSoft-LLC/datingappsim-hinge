@@ -324,13 +324,10 @@ def index():
             <option value="FIFO" selected>FIFO</option>
             <option value="LIFO">LIFO</option>
           </select>
-          <label for="daily_queue_size">Daily Queue Size:</label>
-          <input type="number" id="daily_queue_size" name="daily_queue_size" value="5" min="3" max="10">
-          
-          <label for="weight_reciprocal">Reciprocal Weight:</label>
+          <label for="weight_reciprocal">Reciprocal Weight (w<sub>reciprocal</sub>):</label>
           <input type="number" id="weight_reciprocal" name="weight_reciprocal" value="1.0" step="0.1" min="0" max="5.0">
           
-          <label for="weight_queue_penalty">Queue Penalty Weight:</label>
+          <label for="weight_queue_penalty">Queue Penalty Weight (w<sub>queue</sub>):</label>
           <input type="number" id="weight_queue_penalty" name="weight_queue_penalty" value="0.5" step="0.1" min="0" max="2.0">
           
           <label>

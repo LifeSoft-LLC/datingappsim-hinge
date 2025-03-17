@@ -88,14 +88,20 @@ def index():
           <b>=== Hinge-Style Simulation Results ===</b><br>
           <br>
           <b>Total Likes Sent:</b> {total_likes}<br>
+          <div style="margin-left:20px;">
           - Likes by men: {likes_by_men}<br>
-          - Likes by women: {likes_by_women}<br><br>
+          - Likes by women: {likes_by_women}
+          </div><br>
           <b>Total Unseen Likes Sent:</b> {total_unseen} ({unseen_percent:.2f}%)<br>
+          <div style="margin-left:20px;">
           - Likes by men: {unseen_likes_men}<br>
-          - Likes by women: {unseen_likes_women}<br><br>
+          - Likes by women: {unseen_likes_women}
+          </div><br>
           <b>Total Stale Unseen Likes Sent:</b> {total_stale} ({stale_percent:.2f}%)<br>
+          <div style="margin-left:20px;">
           - Likes by men: {stale_likes_men}<br>
-          - Likes by women: {stale_likes_women}<br><br>
+          - Likes by women: {stale_likes_women}
+          </div><br>
           <b>Matches Created: <span style="color:purple; font-size:20px;">{unique_matches}</span></b>
         </div>
         """

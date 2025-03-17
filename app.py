@@ -341,16 +341,6 @@ def index():
           <input type="number" id="weight_queue_penalty" name="weight_queue_penalty" value="0.0" step="0.1" min="0" max="2.0">
           
           <label>
-            <input type="checkbox" name="export_trace" disabled>
-            Export Excel Trace?
-          </label>
-          
-          <label>
-            <input type="checkbox" name="export_jack_jill_trace" disabled>
-            Export Jack & Jill Trace?
-          </label>
-          
-          <label>
             <input type="checkbox" name="show_match_plots" checked>
             Show Match Plots?
           </label>

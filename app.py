@@ -82,18 +82,32 @@ def index():
         unseen_percent = (total_unseen / total_likes * 100) if total_likes > 0 else 0
         stale_percent = (total_stale / total_likes * 100) if total_likes > 0 else 0
 
-        # Prepare summary HTML
+        # NEW METRICS: Profile views and counts of users with at least one match.
+        profile_views_total = full_log.shape[0]
+        profile_views_men = full_log[full_log["UserID"].str.startswith("M")].shape[0]
+        profile_views_women = full_log[full_log["UserID"].str.startswith("W")].shape[0]
+        men_with_matches = sum(1 for uid in all_men_ids if len(matches[uid]) > 0)
+        women_with_matches = sum(1 for uid in all_women_ids if len(matches[uid]) > 0)
+
+        # Prepare summary HTML following the provided structure.
         summary_html = f"""
-        <h2>Hinge-Style Simulation Results</h2>
-        <p><b>Days:</b> 3 (fixed) &nbsp;&nbsp;
-           <b>Daily Queue Size:</b> {daily_queue_size}</p>
-        <p><b>Total Likes Sent:</b> {total_likes}
-           (Men: {likes_by_men}, Women: {likes_by_women})</p>
-        <p><b>Total Unseen Likes Sent:</b> {total_unseen} ({unseen_percent:.2f}%)
-           (Men: {unseen_likes_men}, Women: {unseen_likes_women}</p>
-        <p><b>Total Stale Unseen Likes Sent:</b> {total_stale} ({stale_percent:.2f}%)
-           (Men: {stale_likes_men}, Women: {stale_likes_women})</p>
-        <p><b>Unique Matches Created:</b> {unique_matches}</p>
+        <div style='font-size:14px; line-height:1.5;'>
+          # of profile views: {profile_views_total}<br>
+          - By men: {profile_views_men}<br>
+          - By women: {profile_views_women}<br><br>
+          # of Likes Sent: {total_likes}<br>
+          - By men: {likes_by_men}<br>
+          - By women: {likes_by_women}<br><br>
+          # of Unseen Likes Sent: {total_unseen} ({unseen_percent:.2f}% of likes sent)<br>
+          - By men: {unseen_likes_men}<br>
+          - By women: {unseen_likes_women}<br><br>
+          # of Stale Unseen Likes Sent: {total_stale} ({stale_percent:.2f}%)<br>
+          - By men: {stale_likes_men}<br>
+          - By women: {stale_likes_women}<br><br>
+          # of Matches Created: {unique_matches}<br>
+          # of men who receive at least one match: {men_with_matches}<br>
+          # of women who receive at least one match: {women_with_matches}
+        </div>
         """
 
         # Generate plots
@@ -280,7 +294,6 @@ def index():
             </div>
             {% if plot_img %}
             <div>
-              <h3>Match Distribution Plots</h3>
               <img src="data:image/svg+xml;base64,{{ plot_img }}" alt="Plots">
             </div>
             {% endif %}
@@ -305,31 +318,29 @@ def index():
         </style>
       </head>
       <body>
-        <h2>Hinge-Style Simulation Parameters</h2>
+        <h1>A "Hinge-like" dating simulation</h1>
+        <p>This simulation is similar to the one you saw during class. It is designed to replicate the dynamics of a (highly simplified) dating platform.</p>
+        <p>As before, the simulation runs for three "days." Each day, the same 100 men and women (200 people in total), each with their own profiles and preferences, "log into" the platform in a random order and swipe right (like) or left (pass) on five profiles of the opposite sex (this is a heterosexual illustration; the underlying concepts apply generally).</p>
+        <p>The difference this time is that the simulation more closely follows the design of the the dating app Hinge. Rather than a single recommendations list as a mix of incoming likes and fresh profiles, we imagine that users begin on a separate "Incoming likes" tab. This tab <em>only</em> shows profiles that are incoming likes. Once the user exhausts their "Incoming likes" tab, if they have any leftover "capacity" (that is, if they have not yet processed 5 profiles that day), they move to a general browsing tab showing fresh profiles from among the remaining candidates, and they continue to like or pass until they reach their daily limit of 5.</p>
+        <p>The order of each user's "Incoming likes" tab can be either FIFO or LIFO (the real Hinge uses LIFO). Simultaneously, in the general browsing tab, each user <i>i</i> is recommended profiles in descending order of a personalized score <i>s(i,j)</i> assigned to each potential match <i>j</i> on the other side of the market. That score is parameterized by two "weights" that will be chosen by you.
+        <ul>
+          <li>The first is w<sub>reciprocal</sub> — by increasing this weight, you will increasingly <u><em>prioritize</em></u> candidates <i>j</i> with a higher likelihood of liking <i>i</i> back. Choose w<sub>reciprocal</sub> between 0 and 5.</li>
+          <li>The second is w<sub>queue</sub> — by increasing this weight, you will increasingly <u><em>suppress</em></u> candidates <i>j</i> with a longer queue of (unseen) incoming likes. Choose w<sub>queue</sub> between 0 and 2.</li>
+        </ul></p>
+        <p>See the slide deck for Session 2 on Canvas for a precise definition of the score <i>s(i,j)</i>.</p>
+        <p>Like in class, as you change these weights you can observe the effects of your decisions on the overall performance of the digital marketplace, including likes, unseen likes, "stale" unseen likes (not seen for more than a day), and matches. Note that there is randomness in the responses of users and so simulation results will fluctuate somewhat from one run to the next.</p>
+        <p>Results can be reported as either a bar chart (one bar is one man or one woman) or as a histogram of counts.</p>
         <form method="post">
           <label for="incoming_order">Incoming Queue Order:</label>
           <select id="incoming_order" name="incoming_order">
             <option value="FIFO" selected>FIFO</option>
             <option value="LIFO">LIFO</option>
           </select>
-          <label for="daily_queue_size">Daily Queue Size:</label>
-          <input type="number" id="daily_queue_size" name="daily_queue_size" value="5" min="3" max="10">
+          <label for="weight_reciprocal">Reciprocal Weight (w<sub>reciprocal</sub>):</label>
+          <input type="number" id="weight_reciprocal" name="weight_reciprocal" value="0.0" step="0.1" min="0" max="5.0">
           
-          <label for="weight_reciprocal">Reciprocal Weight:</label>
-          <input type="number" id="weight_reciprocal" name="weight_reciprocal" value="1.0" step="0.1" min="0" max="5.0">
-          
-          <label for="weight_queue_penalty">Queue Penalty Weight:</label>
-          <input type="number" id="weight_queue_penalty" name="weight_queue_penalty" value="0.5" step="0.1" min="0" max="2.0">
-          
-          <label>
-            <input type="checkbox" name="export_trace" disabled>
-            Export Excel Trace?
-          </label>
-          
-          <label>
-            <input type="checkbox" name="export_jack_jill_trace" disabled>
-            Export Jack & Jill Trace?
-          </label>
+          <label for="weight_queue_penalty">Queue Penalty Weight (w<sub>queue</sub>):</label>
+          <input type="number" id="weight_queue_penalty" name="weight_queue_penalty" value="0.0" step="0.1" min="0" max="2.0">
           
           <label>
             <input type="checkbox" name="show_match_plots" checked>

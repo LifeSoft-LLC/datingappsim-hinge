@@ -82,31 +82,45 @@ def index():
         unseen_percent = (total_unseen / total_likes * 100) if total_likes > 0 else 0
         stale_percent = (total_stale / total_likes * 100) if total_likes > 0 else 0
 
-        # NEW METRICS: Profile views and counts of users with at least one match.
+        # NEW METRIC: Compute Profile Views from full_log
         profile_views_total = full_log.shape[0]
         profile_views_men = full_log[full_log["UserID"].str.startswith("M")].shape[0]
         profile_views_women = full_log[full_log["UserID"].str.startswith("W")].shape[0]
-        men_with_matches = sum(1 for uid in all_men_ids if len(matches[uid]) > 0)
-        women_with_matches = sum(1 for uid in all_women_ids if len(matches[uid]) > 0)
 
-        # Prepare summary HTML following the provided structure.
+        # NEW METRIC: Compute number of men and women with at least one match
+        men_with_match_count = sum(1 for uid in all_men_ids if len(matches[uid]) > 0)
+        women_with_match_count = sum(1 for uid in all_women_ids if len(matches[uid]) > 0)
+        
+        # Prepare summary HTML with modified structure
         summary_html = f"""
         <div style='font-size:14px; line-height:1.5;'>
-          # of profile views: {profile_views_total}<br>
+          <b>=== Hinge-Style Simulation Results ===</b><br>
+          <br>
+          <b># of Profile Views:</b> {profile_views_total}<br>
+          <div style="margin-left:20px;">
           - By men: {profile_views_men}<br>
-          - By women: {profile_views_women}<br><br>
-          # of Likes Sent: {total_likes}<br>
+          - By women: {profile_views_women}
+          </div><br>
+          <b># of Likes Sent:</b> {total_likes}<br>
+          <div style="margin-left:20px;">
           - By men: {likes_by_men}<br>
-          - By women: {likes_by_women}<br><br>
-          # of Unseen Likes Sent: {total_unseen} ({unseen_percent:.2f}% of likes sent)<br>
+          - By women: {likes_by_women}
+          </div><br>
+          <b># of Unseen Likes Sent:</b> {total_unseen} ({unseen_percent:.2f}% of likes sent)<br>
+          <div style="margin-left:20px;">
           - By men: {unseen_likes_men}<br>
-          - By women: {unseen_likes_women}<br><br>
-          # of Stale Unseen Likes Sent: {total_stale} ({stale_percent:.2f}%)<br>
+          - By women: {unseen_likes_women}
+          </div><br>
+          <b># of Stale Unseen Likes Sent:</b> {total_stale} ({stale_percent:.2f}% of likes sent)<br>
+          <div style="margin-left:20px;">
           - By men: {stale_likes_men}<br>
-          - By women: {stale_likes_women}<br><br>
-          # of Matches Created: {unique_matches}<br>
-          # of men who receive at least one match: {men_with_matches}<br>
-          # of women who receive at least one match: {women_with_matches}
+          - By women: {stale_likes_women}
+          </div><br>
+          <b># of Matches Created:</b> <span style="color:purple; font-size:20px;">{unique_matches}</span><br>
+          <div style="margin-left:20px;">
+          - # of men who receive at least one match: {men_with_match_count}<br>
+          - # of women who receive at least one match: {women_with_match_count}
+          </div>
         </div>
         """
 
@@ -319,7 +333,7 @@ def index():
       </head>
       <body>
         <h1>A "Hinge-like" dating simulation</h1>
-        <p>This simulation is similar to the one you saw during class. It is designed to replicate the dynamics of a (highly simplified) dating platform.</p>
+        <p>This simulation is similar to the one you saw during class. It is designed to replicate the dynamics of a (highly simplified) dating platform.
         <p>As before, the simulation runs for three "days." Each day, the same 100 men and women (200 people in total), each with their own profiles and preferences, "log into" the platform in a random order and swipe right (like) or left (pass) on five profiles of the opposite sex (this is a heterosexual illustration; the underlying concepts apply generally).</p>
         <p>The difference this time is that the simulation more closely follows the design of the the dating app Hinge. Rather than a single recommendations list as a mix of incoming likes and fresh profiles, we imagine that users begin on a separate "Incoming likes" tab. This tab <em>only</em> shows profiles that are incoming likes. Once the user exhausts their "Incoming likes" tab, if they have any leftover "capacity" (that is, if they have not yet processed 5 profiles that day), they move to a general browsing tab showing fresh profiles from among the remaining candidates, and they continue to like or pass until they reach their daily limit of 5.</p>
         <p>The order of each user's "Incoming likes" tab can be either FIFO or LIFO (the real Hinge uses LIFO). Simultaneously, in the general browsing tab, each user <i>i</i> is recommended profiles in descending order of a personalized score <i>s(i,j)</i> assigned to each potential match <i>j</i> on the other side of the market. That score is parameterized by two "weights" that will be chosen by you.

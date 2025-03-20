@@ -229,8 +229,8 @@ for j, man in enumerate(men_profiles):
 
 # Scale the Men->Women matrix to target an average of ~43%
 avg_prob_men = prob_men_likes_women.mean()
-if avg_prob_men < 0.40 or avg_prob_men > 0.45:
-    scale_factor = 0.43 / avg_prob_men
+if avg_prob_men < 0.60 or avg_prob_men > 0.65:
+    scale_factor = 0.63 / avg_prob_men
     prob_men_likes_women *= scale_factor
 
 # Apply logistic transformation: p* = p/(p+1)

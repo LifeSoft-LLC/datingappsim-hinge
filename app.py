@@ -34,6 +34,7 @@ def index():
 
         # Run the simulation
         daily_logs, matches, incoming_likes = run_dating_simulation(
+            incoming_order=incoming_order,
             daily_queue_size=daily_queue_size,
             weight_reciprocal=weight_reciprocal,
             weight_queue_penalty=weight_queue_penalty,
@@ -94,7 +95,7 @@ def index():
         # Prepare summary HTML with modified structure
         summary_html = f"""
         <div style='font-size:14px; line-height:1.5;'>
-          <b>=== Hinge-Style Simulation Results with w<sub>reciprocal</sub>={weight_reciprocal} and w<sub>queue</sub>={weight_queue_penalty} ===</b><br>
+          <b>=== Hinge-Style Simulation Results with w<sub>reciprocal</sub>={weight_reciprocal} and w<sub>queue</sub>={weight_queue_penalty}, {incoming_order} ===</b><br>
           <br>
           <b># of Profile Views:</b> {profile_views_total}<br>
           <div style="margin-left:20px;">
